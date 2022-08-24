@@ -1,0 +1,31 @@
+{
+  "name": "node-reproject",
+  "version": "1.0.0",
+  "description": "基于node-gdal的栅格重投影工具",
+  "main": "index.js",
+  "bin": {
+    "node-reproject": "./bin/node-reproject.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FreeGIS/node-reproject.git"
+  },
+  "keywords": [
+    "node",
+    "gdal",
+    "reproject"
+  ],
+  "author": "freegis",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FreeGIS/node-reproject/issues"
+  },
+  "homepage": "https://github.com/FreeGIS/node-reproject#readme",
+  "dependencies": {
+    "commander": "^9.4.0",
+    "gdal": "^0.11.1"
+  }
+}
