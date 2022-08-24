@@ -1,6 +1,13 @@
 # node-reproject
 基于node-gdal的栅格重投影工具。
 # 用法
+## 安装
+```
+npm i node-reproject -g
+
+```
+
+## 参数说明
 指定输入影像和重投影输出影像位置，使用-e参数指定重投影的坐标系的epsg编码，-r参数指定重采样策略。
 ```
 node-reproject sourcefile targetfile -e 3857 -r 1
