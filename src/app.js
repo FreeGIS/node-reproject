@@ -1,4 +1,4 @@
-const gdal = require('gdal');
+const gdal = require('gdal-async');
 /**
 * @function 栅格重投影
 * @description 输入一个源数据，设置投影输出数据文件路径和投影坐标系的epsg编码，设置采样参数，输出栅格重投影文件
@@ -9,7 +9,7 @@ const gdal = require('gdal');
 * @return void
 * @author freegis
 */
-function reprojectImage(src_path, reproject_path, t_epsg, resampling = 0) {
+function reprojectImage(src_path, reproject_path, t_epsg, resampling = 0, encoding) {
     let s_ds = gdal.open(src_path);
     // 获取源数据集的 坐标系
     const s_srs = s_ds.srs;
@@ -21,13 +21,39 @@ function reprojectImage(src_path, reproject_path, t_epsg, resampling = 0) {
         s_srs: s_srs,
         t_srs: t_srs
     });
-    // 获取原始数据第一个band的数据类型，作为新的投影后的数据类型
-    // 如果不写，类似默认是uint8，而dem是 int16，就会数据错误
     const dataType = s_ds.bands.get(1).dataType;
     // 使用源数据的驱动，保持文件格式不变
     const t_driver = s_ds.driver;
+    if (encoding == undefined)
+        encoding = dataType;
+    else {
+        switch (encoding) {
+            case 'u8':
+                encoding = gdal.GDT_Byte;
+                break;
+            case 'int16':
+                encoding = gdal.GDT_Int16;
+                break;
+            case 'int32':
+                encoding = gdal.GDT_Int32;
+                break;
+            case 'float32':
+                encoding = gdal.GDT_Float32;
+                break;
+            case 'float64':
+                encoding = gdal.GDT_Float64;
+                break;
+            default:
+                console.error('设置的编码无效，投影后编码将与原始影像一致！')
+                break;
+        }
+    }
     //创建输出图像
-    const t_ds = t_driver.create(reproject_path, rasterSize.x, rasterSize.y, s_ds.bands.count(), dataType);
+    const t_ds = t_driver.create(reproject_path, rasterSize.x, rasterSize.y, s_ds.bands.count(), encoding, {
+        COMPRESS: 'LZW',
+        PHOTOMETRIC: 'RGB',
+        COPY_SRC_DOMAINS: 'NO'
+    });
     //重置索引和仿射变换参数
     t_ds.srs = t_srs;
     t_ds.geoTransform = geoTransform;

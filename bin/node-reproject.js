@@ -8,9 +8,10 @@ program
     .argument('<reproject file path>', '投影后的影像文件路径')
     .version('1.0.0', '-v,--vers', '当前版本号');
 
-program.requiredOption('-e, --epsg <number>', '重投影坐标系的epsg编码');
+program.requiredOption('-s, --epsg <number>', '重投影坐标系的epsg编码');
 // 定义可选条件
 program.option('-r, --resampling <number>', '重采样方法，数值0-6', '0');
+program.option('-e, --encoding <number>', '配置重投影数据编码，u8 int16 int32 float32 float64，默认与原始数据编码一致');
 
 // 解析参数
 program.parse();
@@ -21,7 +22,7 @@ if (program.args.length !== 2) {
 }
 
 let options = program.opts();
-let epsg, resampling;
+let epsg, resampling,encoding;
 if (options['epsg']) {
     epsg = Number(options['epsg']);
 }
@@ -29,6 +30,9 @@ if (options['resampling'])
     resampling = Number(options['resampling']);
 else
     resampling = 0;
+if (options['encoding'])
+    encoding = options['encoding'];
+
 const src_path = program.args[0];
 const reproject_path = program.args[1];
-reprojectImage(src_path, reproject_path, epsg, resampling);
+reprojectImage(src_path, reproject_path, epsg, resampling, encoding);
